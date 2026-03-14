@@ -46,4 +46,11 @@ app.use(express.static(path.join(__dirname, "..", "client")));
 const PORT = Number(process.env.PORT) || 3000;
 app.listen(PORT, () => {
   console.log(`Boggle server running at http://localhost:${PORT}`);
+
+  // Self-ping every 10 minutes to prevent Render free tier spin-down
+  if (process.env.RENDER_EXTERNAL_URL) {
+    setInterval(() => {
+      fetch(process.env.RENDER_EXTERNAL_URL!).catch(() => {});
+    }, 10 * 60 * 1000);
+  }
 });
