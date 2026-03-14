@@ -46,7 +46,12 @@ export class Game {
     );
   }
 
+  private gridSize = 4;
+  private duration = 180;
+
   async start(size: number, duration: number, onTick: (secondsLeft: number) => void) {
+    this.gridSize = size;
+    this.duration = duration;
     const data = await api("new", { size });
 
     this.board = new Board(data.board, this.boardEl, this.overlayEl);
@@ -96,6 +101,19 @@ export class Game {
   async endGame() {
     this.timer.stop();
     this.dragHandler.disable();
+
+    // Fire-and-forget game log
+    const foundWords = Array.from(this.foundWords).map((w) => ({
+      word: w,
+      score: 0, // server doesn't need client scores
+    }));
+    api("game-end", {
+      foundWords,
+      score: this.score,
+      gridSize: this.gridSize,
+      duration: this.duration,
+    }).catch(() => {});
+
     this.onGameEnd();
   }
 

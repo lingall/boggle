@@ -3,11 +3,13 @@ import path from "path";
 import { loadDictionary } from "./dictionary";
 import { generateBoard } from "./board";
 import { canTrace, solve, scoreWord } from "./solver";
+import { initDb, logGame } from "./db";
 
 const app = express();
 app.use(express.json());
 
 const dict = loadDictionary(path.join(__dirname, "..", "res", "words.txt"));
+initDb().catch((err) => console.error("DB init failed:", err));
 
 let currentBoard: string[][] = [];
 
@@ -39,6 +41,25 @@ app.post("/api/solve", (_req, res) => {
   const total = results.reduce((sum, r) => sum + r.score, 0);
   results.sort((a, b) => b.score - a.score || a.word.localeCompare(b.word));
   res.json({ words: results, total });
+});
+
+app.post("/api/game-end", async (req, res) => {
+  const { foundWords, score, gridSize, duration } = req.body;
+  const solved = solve(currentBoard, dict);
+  const possibleScore = solved.reduce((sum, s) => sum + scoreWord(s.word), 0);
+
+  logGame({
+    ip: req.ip || "unknown",
+    gridSize,
+    duration,
+    playerScore: score,
+    possibleScore,
+    wordsFound: foundWords || [],
+    wordsTotal: solved.length,
+    board: currentBoard,
+  });
+
+  res.json({ logged: true });
 });
 
 app.use(express.static(path.join(__dirname, "..", "client")));
