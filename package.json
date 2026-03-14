@@ -1,0 +1,22 @@
+{
+  "name": "boggle",
+  "version": "1.0.0",
+  "description": "Boggle word game",
+  "scripts": {
+    "dev": "tsx watch server/index.ts",
+    "build": "esbuild client/src/main.ts --bundle --outfile=client/dist/bundle.js --sourcemap",
+    "build:client": "esbuild client/src/main.ts --bundle --outfile=client/dist/bundle.js --sourcemap",
+    "build:client:watch": "esbuild client/src/main.ts --bundle --outfile=client/dist/bundle.js --sourcemap --watch",
+    "start": "tsx server/index.ts"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "esbuild": "^0.25.0",
+    "tsx": "^4.19.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^24.5.2",
+    "typescript": "^5.7.0"
+  }
+}
