@@ -3,7 +3,7 @@ import path from "path";
 import { loadDictionary } from "./dictionary";
 import { generateBoard } from "./board";
 import { canTrace, solve, scoreWord } from "./solver";
-import { initDb, logGame } from "./db";
+import { initDb, logGame, getLeaderboard } from "./db";
 
 const app = express();
 app.use(express.json());
@@ -44,9 +44,14 @@ app.post("/api/solve", (_req, res) => {
 });
 
 app.post("/api/game-end", async (req, res) => {
-  const { foundWords, score, gridSize, duration } = req.body;
+  const { foundWords, score, gridSize, duration, playerName } = req.body;
   const solved = solve(currentBoard, dict);
   const possibleScore = solved.reduce((sum, s) => sum + scoreWord(s.word), 0);
+
+  const wordsWithScores = (foundWords || []).map((w: { word: string }) => ({
+    word: w.word,
+    score: scoreWord(w.word),
+  }));
 
   logGame({
     ip: req.ip || "unknown",
@@ -54,12 +59,18 @@ app.post("/api/game-end", async (req, res) => {
     duration,
     playerScore: score,
     possibleScore,
-    wordsFound: foundWords || [],
+    wordsFound: wordsWithScores,
     wordsTotal: solved.length,
     board: currentBoard,
+    playerName: playerName || undefined,
   });
 
   res.json({ logged: true });
+});
+
+app.get("/api/leaderboard", async (_req, res) => {
+  const entries = await getLeaderboard();
+  res.json({ entries });
 });
 
 app.use(express.static(path.join(__dirname, "..", "client")));

@@ -101,20 +101,16 @@ export class Game {
   async endGame() {
     this.timer.stop();
     this.dragHandler.disable();
+    this.onGameEnd();
+  }
 
-    // Fire-and-forget game log
-    const foundWords = Array.from(this.foundWords).map((w) => ({
-      word: w,
-      score: 0, // server doesn't need client scores
-    }));
-    api("game-end", {
-      foundWords,
+  getGameData() {
+    return {
+      foundWords: Array.from(this.foundWords).map((w) => ({ word: w })),
       score: this.score,
       gridSize: this.gridSize,
       duration: this.duration,
-    }).catch(() => {});
-
-    this.onGameEnd();
+    };
   }
 
   async getSolveResults() {

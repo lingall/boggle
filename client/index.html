@@ -54,6 +54,15 @@
       <div class="card results-header">
         <h2>Game Over!</h2>
         <div id="final-score">Your score: <span id="your-score"></span></div>
+        <div id="save-score-row">
+          <input type="text" id="player-name" placeholder="Enter your name" maxlength="20">
+          <button id="save-score" class="btn btn-green">Save Score</button>
+        </div>
+        <div id="save-score-status" class="hidden"></div>
+      </div>
+      <div id="leaderboard" class="card hidden">
+        <h3>Leaderboard</h3>
+        <ol id="leaderboard-list"></ol>
       </div>
       <div id="results-body">
         <div id="results-board-slot"></div>

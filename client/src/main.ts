@@ -1,4 +1,17 @@
 import { Game } from "./Game";
+import { api } from "./api";
+
+// --- Cookie helpers ---
+
+function getPlayerName(): string {
+  const match = document.cookie.match(/(?:^|; )boggle_name=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : "";
+}
+
+function setPlayerName(name: string) {
+  const encoded = encodeURIComponent(name);
+  document.cookie = `boggle_name=${encoded}; max-age=${60 * 60 * 24 * 365}; path=/; SameSite=Lax`;
+}
 
 // --- DOM elements ---
 
@@ -28,6 +41,13 @@ const yourWordsList = document.getElementById("your-words-list")!;
 const allWordsList = document.getElementById("all-words-list")!;
 const possibleCountSpan = document.getElementById("possible-count")!;
 const playAgainBtn = document.getElementById("play-again")!;
+
+const playerNameInput = document.getElementById("player-name") as HTMLInputElement;
+const saveScoreBtn = document.getElementById("save-score")!;
+const saveScoreStatus = document.getElementById("save-score-status")!;
+const saveScoreRow = document.getElementById("save-score-row")!;
+const leaderboardDiv = document.getElementById("leaderboard")!;
+const leaderboardList = document.getElementById("leaderboard-list")!;
 
 // --- Game instance ---
 
@@ -125,7 +145,60 @@ async function endGame() {
     allWordsList.appendChild(li);
   }
 
+  // Reset save-score UI
+  playerNameInput.value = getPlayerName();
+  saveScoreRow.classList.remove("hidden");
+  saveScoreStatus.classList.add("hidden");
+  saveScoreStatus.textContent = "";
+  leaderboardDiv.classList.add("hidden");
+
   showScreen("results");
+  fetchLeaderboard();
+}
+
+async function saveScore() {
+  const name = playerNameInput.value.trim();
+  if (!name) {
+    playerNameInput.focus();
+    return;
+  }
+
+  setPlayerName(name);
+  saveScoreBtn.setAttribute("disabled", "true");
+
+  const gameData = game.getGameData();
+  await api("game-end", { ...gameData, playerName: name }).catch(() => {});
+
+  saveScoreRow.classList.add("hidden");
+  saveScoreStatus.textContent = "Score saved!";
+  saveScoreStatus.classList.remove("hidden");
+  saveScoreBtn.removeAttribute("disabled");
+
+  fetchLeaderboard();
+}
+
+async function fetchLeaderboard() {
+  try {
+    const res = await fetch("/api/leaderboard");
+    const data = await res.json();
+    if (!data.entries || data.entries.length === 0) return;
+
+    leaderboardList.innerHTML = "";
+    for (const entry of data.entries) {
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="lb-name">${escapeHtml(entry.name)}</span><span class="lb-score">${entry.score}</span>`;
+      leaderboardList.appendChild(li);
+    }
+    leaderboardDiv.classList.remove("hidden");
+  } catch (_) {
+    // Leaderboard fetch failed silently
+  }
+}
+
+function escapeHtml(str: string): string {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
 }
 
 // --- Event listeners ---
@@ -133,3 +206,7 @@ async function endGame() {
 newGameBtn.addEventListener("click", startGame);
 giveUpBtn.addEventListener("click", () => game.endGame());
 playAgainBtn.addEventListener("click", () => showScreen("setup"));
+saveScoreBtn.addEventListener("click", saveScore);
+playerNameInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") saveScore();
+});

@@ -488,6 +488,100 @@ h1 {
   background: rgba(245, 230, 200, 0.25);
 }
 
+/* --- Save score --- */
+
+#save-score-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 14px;
+}
+
+#player-name {
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 1em;
+  font-weight: 600;
+  border: 2px solid #c4a66a;
+  border-radius: 8px;
+  background: #fff8ee;
+  color: #3b2a12;
+  outline: none;
+  width: 180px;
+  transition: border-color 0.2s;
+}
+
+#player-name:focus {
+  border-color: #2d6b3f;
+}
+
+#save-score {
+  padding: 8px 20px;
+  font-size: 1em;
+}
+
+#save-score-status {
+  margin-top: 10px;
+  font-weight: 600;
+  color: #2d6b3f;
+  font-size: 1.05em;
+}
+
+/* --- Leaderboard --- */
+
+#leaderboard {
+  margin-top: 16px;
+  text-align: center;
+}
+
+#leaderboard h3 {
+  font-family: 'Lora', serif;
+  font-size: 1.4em;
+  color: #5a3e1b;
+  margin-bottom: 12px;
+}
+
+#leaderboard ol {
+  list-style: none;
+  counter-reset: lb;
+  padding: 0;
+}
+
+#leaderboard li {
+  counter-increment: lb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1.05em;
+  color: #3b2a12;
+}
+
+#leaderboard li::before {
+  content: counter(lb) ".";
+  margin-right: 10px;
+  color: #8a7040;
+  min-width: 24px;
+}
+
+#leaderboard li:nth-child(odd) {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.lb-name {
+  flex: 1;
+  text-align: left;
+}
+
+.lb-score {
+  font-family: 'Lora', serif;
+  color: #2d6b3f;
+  font-weight: 700;
+}
+
 #play-again {
   margin-top: 16px;
 }
