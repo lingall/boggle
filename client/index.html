@@ -21,7 +21,7 @@
       </label>
       <label>
         Timer (seconds)
-        <input type="number" id="timer-duration" value="180" min="30" max="600" step="30">
+        <input type="number" id="timer-duration" value="90" min="30" max="600" step="30">
       </label>
       <button id="new-game" class="btn btn-green">New Game</button>
     </div>
@@ -60,10 +60,6 @@
         </div>
         <div id="save-score-status" class="hidden"></div>
       </div>
-      <div id="leaderboard" class="card hidden">
-        <h3>Leaderboard</h3>
-        <ol id="leaderboard-list"></ol>
-      </div>
       <div id="results-body">
         <div id="results-board-slot"></div>
         <div id="results-lists">
@@ -79,6 +75,12 @@
       </div>
       <button id="play-again" class="btn btn-green">Play Again</button>
     </div>
+  </div>
+
+  <div id="leaderboard" class="hidden">
+    <h3>Leaderboard</h3>
+    <p id="leaderboard-subtitle"></p>
+    <ol id="leaderboard-list"></ol>
   </div>
 
   <script src="dist/bundle.js"></script>

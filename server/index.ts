@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import path from "path";
 import { loadDictionary } from "./dictionary";
@@ -53,7 +54,7 @@ app.post("/api/game-end", async (req, res) => {
     score: scoreWord(w.word),
   }));
 
-  logGame({
+  await logGame({
     ip: req.ip || "unknown",
     gridSize,
     duration,
@@ -68,8 +69,10 @@ app.post("/api/game-end", async (req, res) => {
   res.json({ logged: true });
 });
 
-app.get("/api/leaderboard", async (_req, res) => {
-  const entries = await getLeaderboard();
+app.get("/api/leaderboard", async (req, res) => {
+  const gridSize = Number(req.query.gridSize) || 4;
+  const duration = Number(req.query.duration) || 180;
+  const entries = await getLeaderboard(gridSize, duration);
   res.json({ entries });
 });
 

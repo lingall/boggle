@@ -528,17 +528,35 @@ h1 {
   font-size: 1.05em;
 }
 
-/* --- Leaderboard --- */
+/* --- Leaderboard (fixed right panel) --- */
 
 #leaderboard {
-  margin-top: 16px;
-  text-align: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 200px;
+  height: 100vh;
+  padding: 20px 14px;
+  background: rgba(30, 18, 8, 0.85);
+  border-left: 2px solid rgba(245, 230, 200, 0.15);
+  overflow-y: auto;
+  z-index: 50;
 }
 
 #leaderboard h3 {
   font-family: 'Lora', serif;
-  font-size: 1.4em;
-  color: #5a3e1b;
+  font-size: 1.15em;
+  color: #f5e6c8;
+  text-align: center;
+  margin-bottom: 4px;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+  letter-spacing: 1px;
+}
+
+#leaderboard-subtitle {
+  text-align: center;
+  font-size: 0.82em;
+  color: #a08550;
   margin-bottom: 12px;
 }
 
@@ -551,35 +569,40 @@ h1 {
 #leaderboard li {
   counter-increment: lb;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 14px;
-  border-radius: 6px;
+  align-items: baseline;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 0.88em;
   font-weight: 600;
-  font-size: 1.05em;
-  color: #3b2a12;
+  color: #f5e6c8;
 }
 
 #leaderboard li::before {
   content: counter(lb) ".";
-  margin-right: 10px;
-  color: #8a7040;
-  min-width: 24px;
+  margin-right: 6px;
+  color: #a08550;
+  min-width: 20px;
+  font-size: 0.85em;
 }
 
 #leaderboard li:nth-child(odd) {
-  background: rgba(0, 0, 0, 0.04);
+  background: rgba(245, 230, 200, 0.06);
 }
 
 .lb-name {
   flex: 1;
   text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .lb-score {
   font-family: 'Lora', serif;
-  color: #2d6b3f;
+  color: #6aaa7a;
   font-weight: 700;
+  margin-left: 6px;
+  white-space: nowrap;
 }
 
 #play-again {

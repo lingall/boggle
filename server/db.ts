@@ -71,12 +71,13 @@ export async function logGame(data: {
   }
 }
 
-export async function getLeaderboard(): Promise<{ name: string; score: number }[]> {
+export async function getLeaderboard(gridSize: number, duration: number): Promise<{ name: string; score: number }[]> {
   if (!db) return [];
   try {
-    const result = await db.execute(
-      `SELECT player_name, player_score FROM games WHERE player_name IS NOT NULL ORDER BY player_score DESC LIMIT 10`
-    );
+    const result = await db.execute({
+      sql: `SELECT player_name, player_score FROM games WHERE player_name IS NOT NULL AND grid_size = ? AND duration_seconds = ? ORDER BY player_score DESC LIMIT 10`,
+      args: [gridSize, duration],
+    });
     return result.rows.map((row) => ({
       name: row.player_name as string,
       score: row.player_score as number,

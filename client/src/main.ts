@@ -48,6 +48,7 @@ const saveScoreStatus = document.getElementById("save-score-status")!;
 const saveScoreRow = document.getElementById("save-score-row")!;
 const leaderboardDiv = document.getElementById("leaderboard")!;
 const leaderboardList = document.getElementById("leaderboard-list")!;
+const leaderboardSubtitle = document.getElementById("leaderboard-subtitle")!;
 
 // --- Game instance ---
 
@@ -68,6 +69,8 @@ function showScreen(screen: "setup" | "game" | "results") {
   gameDiv.classList.toggle("hidden", screen !== "game");
   resultsDiv.classList.toggle("hidden", screen !== "results");
   boardContainer.classList.toggle("hidden", screen === "setup");
+
+  leaderboardDiv.classList.toggle("hidden", screen !== "results");
 
   if (screen === "results") {
     resultsBoardSlot.appendChild(boardContainer);
@@ -179,11 +182,20 @@ async function saveScore() {
 
 async function fetchLeaderboard() {
   try {
-    const res = await fetch("/api/leaderboard");
+    const { gridSize, duration } = game.getGameData();
+    const mins = Math.floor(duration / 60);
+    const secs = duration % 60;
+    const timeStr = secs ? `${mins}:${secs.toString().padStart(2, "0")}` : `${mins}:00`;
+    leaderboardSubtitle.textContent = `${gridSize}\u00d7${gridSize} \u00b7 ${timeStr}`;
+
+    const res = await fetch(`/api/leaderboard?gridSize=${gridSize}&duration=${duration}`);
     const data = await res.json();
-    if (!data.entries || data.entries.length === 0) return;
 
     leaderboardList.innerHTML = "";
+    if (!data.entries || data.entries.length === 0) {
+      leaderboardList.innerHTML = "<li>No scores yet</li>";
+      return;
+    }
     for (const entry of data.entries) {
       const li = document.createElement("li");
       li.innerHTML = `<span class="lb-name">${escapeHtml(entry.name)}</span><span class="lb-score">${entry.score}</span>`;
